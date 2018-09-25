@@ -1,6 +1,8 @@
 # Filament
 
-Small commandline tool 
+Small commandline tool to calculate how much it costs to print a plastic model
+
+note that this just calculates the price of the filament, electricity, printer wear and labor time is not included 
 
 ## Installation
 
