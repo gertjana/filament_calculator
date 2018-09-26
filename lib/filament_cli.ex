@@ -7,6 +7,20 @@ defmodule Filament.CLI do
   name "Filament"
   description "Filament calculations"
 
+  command :delete do
+    aliases [:d]
+    description "[code] the code of the filament you want to delete"
+
+    argument :code, help: "Filament code"
+
+    run context do
+      case Filament.get(context[:code]) do
+        nil -> IO.puts "material #{context[:code]} not found"
+        material  -> IO.puts Filament.delete(material)
+      end
+    end
+  end
+
   command :add do
     aliases [:a]
     description "[code] [manufacturer] [name] [diameter in mm] [density in g/cm^3] [price roll] [weight roll in g] Adds a filament to the list"

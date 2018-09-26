@@ -20,13 +20,22 @@ defmodule Filament do
     "Filament costs are #{cost} €"  
   end
   
+  defp save(materials) do
+    {:ok, json} = Poison.encode(materials)
+    File.write(Path.expand("~/.filament"), json) 
+  end   
+
+  def delete(material) do
+    filtered = list() |> Enum.filter(fn m -> m.code != material.code end)
+    save(filtered)
+    "Deleted #{material.code}"
+  end
+
   def add(material) do
     case get(material.code) do
       nil ->     
-        with {:ok, json} <- Poison.encode([material | list()]),
-             {:ok} <- File.write(Path.expand("~/.filament"), json) do
-          "Added #{material.code}"       
-        end   
+        save([material | list()])
+        "Added #{material.code}"       
       _ -> "Material with code #{material.code} already exists"
     end 
   end
