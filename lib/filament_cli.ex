@@ -12,7 +12,7 @@ defmodule Filament.CLI do
   description "Filament calculations"
 
   command :delete do
-    aliases [:d]
+    aliases [:d, :del]
     description "[code] the code of the filament you want to delete"
 
     argument :code, help: "Filament code"
@@ -27,15 +27,15 @@ defmodule Filament.CLI do
 
   command :add do
     aliases [:a]
-    description "[code] [manufacturer] [name] [diameter in mm] [density in g/cm^3] [price roll] [weight roll in g] Adds a filament to the list"
+    description "[code] [manufacturer] [name] [diameter in mm] [density in g/cm^3] [price of spool in €] [net weight of spool in g] Adds a filament to the list"
 
     argument :code, help: "Filament code, must be unique"
     argument :manufacturer, help: "manufacturer of the filament"
     argument :name, help: "name of the filament"
     argument :diameter, help: "The diameter in mm (usually 1.75 mm)", type: :float
     argument :density, help: "the density of the material in g/cm^3" , type: :float
-    argument :price, help: "the price for a roll", type: :float
-    argument :weight, help: "the new weight of the roll in grams", type: :float
+    argument :price, help: "the price for a spool", type: :float
+    argument :weight, help: "the net weight of the spool in grams", type: :float
 
     run context do
       print_message(:result,Filament.add(%Filament{code: context[:code], manufacturer: context[:manufacturer], name: context[:name], diameter: context[:diameter], density: context[:density], price: context[:price], weight: context[:weight]}))
@@ -44,7 +44,7 @@ defmodule Filament.CLI do
 
   command :calculate do
     aliases [:c, :calc]
-    description "[code] [length] Calculates the price for a length of filament described by its code"
+    description "[code] [length in cm] Calculates the price for a length of filament described by its code"
     
     argument :code, help: "Filament code"
     argument :len,  help: "length of the filament used in cm", type: :integer
@@ -56,10 +56,21 @@ defmodule Filament.CLI do
       end
     end
   end
+  
+  command :materials do
+    aliases [:m, :mat]
+    description "Lists densities for commonly used materials"
+    run _ do
+      Material.materials |> print_table(data: [
+        {"Type", :type},
+        {"Density (g/cm^3)", :density}
+      ], style: Scribe.Style.Pseudo)
+    end
+  end
 
   command :list do
-    aliases [:l]
-    description "List configured filaments"
+    aliases [:l, :ls]
+    description "Lists configured filaments"
 
     run _ do
       Filament.list() |> print_table(data: [

@@ -8,7 +8,6 @@ defmodule Filament do
 		:ets.new(:filament, [:set, :public, :named_table])
 		with {:ok, body} <- File.read(Path.expand(@store)),
 			   {:ok, materials} <- Poison.decode(body, as: [%Filament{}]) do
-  	  
       :ets.insert(:filament, {:materials, materials})
     end   
     {:ok, self()}
@@ -19,12 +18,12 @@ defmodule Filament do
     vol = :math.pi * len * :math.pow(r,2) # volume in cm^3
     mass = filament.density * vol # mass in g 
     cost = mass/filament.weight*filament.price |> Float.round(2)
-    "Filament costs are #{cost} €"  
+    "Printing #{len} cm of #{filament.name} (#{filament.manufacturer}) will cost you around €#{cost}"  
   end
   
   defp save(materials) do
     {:ok, json} = Poison.encode(materials,pretty: true)
-    File.write(Path.expand(@store), json) 
+    File.write!(Path.expand(@store), json) 
   end   
 
   def delete(material) do
@@ -40,6 +39,16 @@ defmodule Filament do
         "Added #{material.code}"       
       _ -> "Material with code #{material.code} already exists"
     end 
+  end
+
+  def materials do 
+    [%{"ABS" => "1.04 g/cm^3"},
+      %{"PLA" => "1.24 g/cm^3"},
+      %{"PETG" => "1.23 g/cm^3"},
+      %{"HIPS" => "1.03 - 1.04 g/cm^3"},
+      %{"FLEX" => "1.19 - 1.23 g/cm^3"},
+      %{"Nylon" => "1.06 - 1.14 g/cm^3"}
+    ]
   end
 
   def list do
