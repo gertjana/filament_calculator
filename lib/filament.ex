@@ -1,10 +1,12 @@
 defmodule Filament do
+  @store "~/.filament.json"
+
   @derive [Poison.Encoder]
   defstruct [:code, :manufacturer, :name, :diameter, :density, :price, :weight]
 
   def start(_type, _args) do
 		:ets.new(:filament, [:set, :public, :named_table])
-		with {:ok, body} <- File.read(Path.expand("~/.filament")),
+		with {:ok, body} <- File.read(Path.expand(@store)),
 			   {:ok, materials} <- Poison.decode(body, as: [%Filament{}]) do
   	  
       :ets.insert(:filament, {:materials, materials})
@@ -13,16 +15,16 @@ defmodule Filament do
 	end
 
   def calculate(len, filament) do
-    r = filament.diameter/20
-    vol = :math.pi * len * :math.pow(r,2)
-    mass = filament.density * vol
+    r = filament.diameter/20  # convert to radius in cm
+    vol = :math.pi * len * :math.pow(r,2) # volume in cm^3
+    mass = filament.density * vol # mass in g 
     cost = mass/filament.weight*filament.price |> Float.round(2)
     "Filament costs are #{cost} €"  
   end
   
   defp save(materials) do
-    {:ok, json} = Poison.encode(materials)
-    File.write(Path.expand("~/.filament"), json) 
+    {:ok, json} = Poison.encode(materials,pretty: true)
+    File.write(Path.expand(@store), json) 
   end   
 
   def delete(material) do
