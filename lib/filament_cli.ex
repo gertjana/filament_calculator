@@ -4,6 +4,10 @@ defmodule Filament.CLI do
   Documentation for Filament.
   """    
   
+
+  defp print_table(data, options \\ [style: Scribe.Style.Pseudo]), do: Scribe.print(data, options)
+  defp print_message(result, message, options \\ [style: Scribe.Style.Pseudo]), do: Scribe.print(%{result => message}, options)
+
   name "Filament"
   description "Filament calculations"
 
@@ -15,8 +19,8 @@ defmodule Filament.CLI do
 
     run context do
       case Filament.get(context[:code]) do
-        nil -> IO.puts "material #{context[:code]} not found"
-        material  -> IO.puts Filament.delete(material)
+        nil -> print_message(:failure, "material #{context[:code]} not found")
+        material  ->print_message(:success, Filament.delete(material))
       end
     end
   end
@@ -34,22 +38,21 @@ defmodule Filament.CLI do
     argument :weight, help: "the new weight of the roll in grams", type: :float
 
     run context do
-      IO.puts Filament.add(%Filament{code: context[:code], manufacturer: context[:manufacturer], name: context[:name], diameter: context[:diameter], density: context[:density], price: context[:price], weight: context[:weight]})
+      print_message(:result,Filament.add(%Filament{code: context[:code], manufacturer: context[:manufacturer], name: context[:name], diameter: context[:diameter], density: context[:density], price: context[:price], weight: context[:weight]}))
     end
   end
 
-  command :calc do
-    aliases [:c]
+  command :calculate do
+    aliases [:c, :calc]
     description "[code] [length] Calculates the price for a length of filament described by its code"
     
-
     argument :code, help: "Filament code"
     argument :len,  help: "length of the filament used in cm", type: :integer
 
     run context do
       case Filament.get(context[:code]) do
-        nil -> IO.puts "material #{context[:code]} not found, maybe add it?"
-        material -> IO.puts Filament.calculate(context[:len], material)
+        nil -> print_message(:failure, "material #{context[:code]} not found, maybe add it?")
+        material -> print_message(:success, Filament.calculate(context[:len], material))
       end
     end
   end
@@ -59,11 +62,15 @@ defmodule Filament.CLI do
     description "List configured filaments"
 
     run _ do
-      Filament.list() |> Enum.map(
-          fn m ->
-            IO.puts("#{m.code}\t#{m.manufacturer}\t#{m.name}\t#{m.diameter}\t#{m.density} g/cm^3 \t#{m.price} €\t#{m.weight} g")
-          end
-        ) 
+      Filament.list() |> print_table(data: [
+        {"Code", :code}, 
+        {"Manufacturer", :manufacturer}, 
+        {"Name",:name},
+        {"Diameter (mm)",:diameter},
+        {"Density (g/cm^3)",:density},
+        {"Price (€)",:price},
+        {"Weight (g)",:weight}
+      ], style: Scribe.Style.Pseudo)
     end
   end
 
