@@ -6,6 +6,9 @@ defmodule Filament do
 
   def start(_type, _args) do
 		:ets.new(:filament, [:set, :public, :named_table])
+    if !File.exists?(Path.expand(@store)) do
+      save([])
+    end
 		with {:ok, body} <- File.read(Path.expand(@store)),
 			   {:ok, materials} <- Poison.decode(body, as: [%Filament{}]) do
       :ets.insert(:filament, {:materials, materials})
@@ -39,16 +42,6 @@ defmodule Filament do
         "Added #{material.code}"       
       _ -> "Material with code #{material.code} already exists"
     end 
-  end
-
-  def materials do 
-    [%{"ABS" => "1.04 g/cm^3"},
-      %{"PLA" => "1.24 g/cm^3"},
-      %{"PETG" => "1.23 g/cm^3"},
-      %{"HIPS" => "1.03 - 1.04 g/cm^3"},
-      %{"FLEX" => "1.19 - 1.23 g/cm^3"},
-      %{"Nylon" => "1.06 - 1.14 g/cm^3"}
-    ]
   end
 
   def list do

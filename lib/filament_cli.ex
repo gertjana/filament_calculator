@@ -63,7 +63,9 @@ defmodule Filament.CLI do
     run _ do
       Material.materials |> print_table(data: [
         {"Type", :type},
-        {"Density (g/cm^3)", :density}
+        {"Density (g/cm^3)", :density},
+        {"Extruder Temp (°C)", :extruder},
+        {"Bed Temp (°C)", :bed}
       ], style: Scribe.Style.Pseudo)
     end
   end
