@@ -2,13 +2,13 @@ defmodule Filament do
   @store "~/.filament.json"
 
   @derive [Poison.Encoder]
-  defstruct [:code, :manufacturer, :name, :diameter, :density, :price, :weight]
+  defstruct [:code, :manufacturer, :name, :color, :diameter, :density, :price, :weight]
 
   def start(_type, _args) do
 		:ets.new(:filament, [:set, :public, :named_table])
-    if !File.exists?(Path.expand(@store)) do
-      save([])
-    end
+
+    if !File.exists?(Path.expand(@store)), do: save([])
+
 		with {:ok, body} <- File.read(Path.expand(@store)),
 			   {:ok, materials} <- Poison.decode(body, as: [%Filament{}]) do
       :ets.insert(:filament, {:materials, materials})

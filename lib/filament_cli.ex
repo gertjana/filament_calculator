@@ -27,18 +27,29 @@ defmodule Filament.CLI do
 
   command :add do
     aliases [:a]
-    description "[code] [manufacturer] [name] [diameter in mm] [density in g/cm^3] [price of spool in €] [net weight of spool in g] Adds a filament to the list"
+    description "[code] [manufacturer] [name] [color] [diameter in mm] [density in g/cm^3] [price of spool in €] [net weight of spool in g] Adds a filament to the list"
 
     argument :code, help: "Filament code, must be unique"
-    argument :manufacturer, help: "manufacturer of the filament"
-    argument :name, help: "name of the filament"
+    argument :manufacturer, help: "The manufacturer of the filament"
+    argument :name, help: "The name of the filament"
+    argument :color, help: "The color of the filament"
     argument :diameter, help: "The diameter in mm (usually 1.75 mm)", type: :float
-    argument :density, help: "the density of the material in g/cm^3" , type: :float
-    argument :price, help: "the price for a spool", type: :float
-    argument :weight, help: "the net weight of the spool in grams", type: :float
+    argument :density, help: "The density of the material in g/cm^3" , type: :float
+    argument :price, help: "The price for a spool", type: :float
+    argument :weight, help: "The net weight of the spool in grams", type: :float
 
     run context do
-      print_message(:result,Filament.add(%Filament{code: context[:code], manufacturer: context[:manufacturer], name: context[:name], diameter: context[:diameter], density: context[:density], price: context[:price], weight: context[:weight]}))
+      print_message(:result,Filament.add(
+        %Filament{code: context[:code], 
+                  manufacturer: context[:manufacturer], 
+                  name: context[:name], 
+                  color: context[:color], 
+                  diameter: context[:diameter], 
+                  density: context[:density], 
+                  price: context[:price], 
+                  weight: context[:weight]
+        }
+      ))
     end
   end
 
@@ -79,6 +90,7 @@ defmodule Filament.CLI do
         {"Code", :code}, 
         {"Manufacturer", :manufacturer}, 
         {"Name",:name},
+        {"Color",:color},
         {"Diameter (mm)",:diameter},
         {"Density (g/cm^3)",:density},
         {"Price (€)",:price},
