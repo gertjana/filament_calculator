@@ -1,4 +1,4 @@
-# Filament
+# Filament calculator
 
 Small commandline tool to calculate how much it costs to print a plastic model
 
