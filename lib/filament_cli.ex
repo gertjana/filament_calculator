@@ -36,7 +36,7 @@ defmodule Filament.CLI do
     argument :diameter, help: "The diameter in mm (usually 1.75 mm)", type: :float
     argument :density, help: "The density of the material in g/cm^3" , type: :float
     argument :price, help: "The price for a spool", type: :float
-    argument :weight, help: "The net weight of the spool in grams", type: :float
+    argument :weight, help: "The net weight of the spool in grams", type: :integer
 
     run context do
       print_message(:result,Filament.add(
