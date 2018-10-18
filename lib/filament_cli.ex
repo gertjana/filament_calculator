@@ -81,12 +81,29 @@ defmodule Filament.CLI do
     end
   end
 
+  command :color do
+    aliases [:col]
+    description "[code] [color] Adds extra colors for an existing filament"
+
+    argument :code, help: "Filament code"
+    argument :color, help: "Color name"
+
+    run context do
+      case Filament.get(context[:code]) do
+        nil -> print_message(:failure, "filement #{context[:code]} not found, maybe add it?")
+        material -> print_message(:success, Filament.add_color(context[:color], material))               
+      end      
+    end
+  end
+
+
   command :list do
     aliases [:l, :ls]
     description "Lists configured filaments"
 
     run _ do
-      Filament.list() |> print_table(data: [
+      l = Filament.list() 
+      l |> print_table(data: [
         {"Code", :code}, 
         {"Manufacturer", :manufacturer}, 
         {"Name",:name},
