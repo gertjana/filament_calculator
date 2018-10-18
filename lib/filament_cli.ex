@@ -70,7 +70,7 @@ defmodule Filament.CLI do
   
   command :materials do
     aliases [:m, :mat]
-    description "Lists densities for commonly used materials"
+    description "Lists densities and temperatures for commonly used materials"
     run _ do
       Material.materials |> print_table(data: [
         {"Type", :type},
